@@ -1,0 +1,35 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node/Frontend
+node_modules/
+.DS_Store
+dist/
+*.local
+
+# Logs
+*.log

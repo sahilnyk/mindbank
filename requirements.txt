@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+spacy
+jsonschema
+pydantic
+python-dotenv
+pytest
+gunicorn
