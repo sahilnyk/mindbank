@@ -64,7 +64,7 @@ def health():
 @app.post("/extract")
 def extract_memories(request: ExtractRequest):
     try:
-        messages_list = [msg.model_dump() for msg in request.messages]
+        messages_list = [msg.dict() for msg in request.messages]
         
         if request.use_llm and llm_client.is_available():
             logger.info("Using LLM for extraction")
