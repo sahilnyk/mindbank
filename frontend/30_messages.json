@@ -1,0 +1,152 @@
+[
+    {
+        "index": 0,
+        "role": "user",
+        "content": "Hey! I'm really struggling with these morning meetings, they just kill my flow."
+    },
+    {
+        "index": 1,
+        "role": "user",
+        "content": "I prefer working late at night when everything is quiet."
+    },
+    {
+        "index": 2,
+        "role": "user",
+        "content": "Can you recommend something? I'm vegetarian btw."
+    },
+    {
+        "index": 3,
+        "role": "user",
+        "content": "I live in Berlin and the weather has been crazy lately."
+    },
+    {
+        "index": 4,
+        "role": "user",
+        "content": "My cat Luna keeps jumping on my keyboard during calls lol."
+    },
+    {
+        "index": 5,
+        "role": "user",
+        "content": "I'm allergic to peanuts, so always have to be careful."
+    },
+    {
+        "index": 6,
+        "role": "user",
+        "content": "Love listening to lo-fi beats while coding."
+    },
+    {
+        "index": 7,
+        "role": "user",
+        "content": "I hate long messages, please keep it brief."
+    },
+    {
+        "index": 8,
+        "role": "user",
+        "content": "Using Linux for everything, Windows just doesn't cut it for me."
+    },
+    {
+        "index": 9,
+        "role": "user",
+        "content": "Green tea is my go-to drink, have like 5 cups a day."
+    },
+    {
+        "index": 10,
+        "role": "user",
+        "content": "Async communication is so much better than constant interruptions."
+    },
+    {
+        "index": 11,
+        "role": "user",
+        "content": "I really appreciate when people respect my boundaries."
+    },
+    {
+        "index": 12,
+        "role": "user",
+        "content": "My friend Max is visiting from London next week."
+    },
+    {
+        "index": 13,
+        "role": "user",
+        "content": "The deadline is on March 15th, getting a bit stressed about it."
+    },
+    {
+        "index": 14,
+        "role": "user",
+        "content": "I tend to overthink things when I'm anxious."
+    },
+    {
+        "index": 15,
+        "role": "user",
+        "content": "Working from home has been great for my productivity."
+    },
+    {
+        "index": 16,
+        "role": "user",
+        "content": "I'm not a morning person at all, need at least two coffees to function."
+    },
+    {
+        "index": 17,
+        "role": "user",
+        "content": "Been feeling overwhelmed with all these projects lately."
+    },
+    {
+        "index": 18,
+        "role": "user",
+        "content": "I prefer short standup meetings, like 5 minutes max."
+    },
+    {
+        "index": 19,
+        "role": "user",
+        "content": "My dog needs walking around 7 PM every day."
+    },
+    {
+        "index": 20,
+        "role": "user",
+        "content": "I'm trying to learn Spanish but it's tough."
+    },
+    {
+        "index": 21,
+        "role": "user",
+        "content": "Paris is my favorite city, been there three times."
+    },
+    {
+        "index": 22,
+        "role": "user",
+        "content": "I get really frustrated when people don't read documentation."
+    },
+    {
+        "index": 23,
+        "role": "user",
+        "content": "My birthday is coming up on August 12th."
+    },
+    {
+        "index": 24,
+        "role": "user",
+        "content": "I'm allergic to shellfish too, found out the hard way."
+    },
+    {
+        "index": 25,
+        "role": "user",
+        "content": "I like direct communication, no need to sugarcoat things."
+    },
+    {
+        "index": 26,
+        "role": "user",
+        "content": "Been using Vim for 5 years now, can't go back to other editors."
+    },
+    {
+        "index": 27,
+        "role": "user",
+        "content": "I feel more creative at night, that's when ideas flow."
+    },
+    {
+        "index": 28,
+        "role": "user",
+        "content": "My sister Sarah is a doctor in New York."
+    },
+    {
+        "index": 29,
+        "role": "user",
+        "content": "I prefer text over calls, gives me time to think."
+    }
+]

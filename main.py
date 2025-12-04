@@ -1,7 +1,10 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from typing import List, Dict, Any, Optional
 import logging
+from pathlib import Path
 
 from backend.app.extraction import Extractor
 from backend.app.validators import validate_memory, ValidationError
@@ -134,6 +137,9 @@ def rewrite_text(request: RewriteRequest):
     except Exception as e:
         logger.error(f"Rewrite error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
 
 
 if __name__ == "__main__":

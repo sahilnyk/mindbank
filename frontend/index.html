@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindBank - Memory Extraction & Personality Engine</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <h1>MindBank</h1>
+                <p class="tagline">Learn from conversations and adapt your tone</p>
+            </div>
+            <div class="header-right">
+                <a href="/docs" class="header-link" target="_blank" title="API Documentation">
+                    <i class="fas fa-book"></i>
+                    <span>API Docs</span>
+                </a>
+                <a href="https://github.com/yourusername/your-repo" class="header-link" target="_blank"
+                    title="View Source Code">
+                    <i class="fab fa-github"></i>
+                    <span>Code</span>
+                </a>
+            </div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('extract')">Memory Extraction</button>
+            <button class="tab-button" onclick="showTab('rewrite')">Personality Engine</button>
+        </div>
+
+        <div id="extract-tab" class="tab-content active">
+            <div class="card">
+                <h2>Extract User Memory</h2>
+
+                <div class="action-buttons">
+                    <button onclick="load30Messages()" class="btn btn-secondary">
+                        Load 30 Sample Messages
+                    </button>
+                    <button onclick="clearMessages()" class="btn btn-danger">
+                        Clear All Messages
+                    </button>
+                </div>
+
+                <div class="message-input-container">
+                    <textarea id="message-input" placeholder="I prefer working from home on Mondays"
+                        rows="3"></textarea>
+                    <button onclick="addMessage()" class="btn btn-primary">Add Message</button>
+                </div>
+
+                <div id="messages-list" class="messages-list"></div>
+
+                <div class="options">
+                    <label>
+                        <input type="checkbox" id="extract-use-llm">
+                        Use LLM for extraction
+                    </label>
+                </div>
+
+                <button onclick="extractMemories()" class="btn btn-success btn-large">
+                    Extract Memories
+                </button>
+            </div>
+
+            <div id="extract-result" class="result-container"></div>
+        </div>
+
+        <div id="rewrite-tab" class="tab-content">
+            <div class="card">
+                <h2>Personality Engine</h2>
+                <textarea id="rewrite-input" placeholder="We need to finish this by Friday" rows="4"></textarea>
+
+                <div class="personality-selector">
+                    <label>Select Personality Style:</label>
+                    <div class="personality-buttons">
+                        <button class="personality-btn active" data-personality="calm_mentor">
+                            Calm Mentor
+                        </button>
+                        <button class="personality-btn" data-personality="witty_friend">
+                            Witty Friend
+                        </button>
+                        <button class="personality-btn" data-personality="therapist">
+                            Therapist
+                        </button>
+                    </div>
+                </div>
+
+                <div class="options">
+                    <label>
+                        <input type="checkbox" id="rewrite-use-llm">
+                        Use LLM for rewriting
+                    </label>
+                </div>
+
+                <button onclick="rewriteText()" class="btn btn-success btn-large">
+                    Transform Text
+                </button>
+            </div>
+
+            <div id="rewrite-result" class="result-container"></div>
+        </div>
+
+        <footer>
+            <div class="social-links">
+                <a href="https://github.com/sahilnyk" class="social-link" target="_blank" title="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/sahil-nayak-464548277/" class="social-link" target="_blank"
+                    title="LinkedIn">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="https://sahilnyk.tech" class="social-link" target="_blank" title="Website">
+                    <i class="fas fa-globe"></i>
+                </a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
