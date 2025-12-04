@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 from typing import List, Dict, Any, Optional
 import logging
 from pathlib import Path
+import os
 
 from backend.app.extraction import Extractor
 from backend.app.validators import validate_memory, ValidationError
@@ -44,14 +45,7 @@ class RewriteRequest(BaseModel):
 
 @app.get("/")
 def root():
-    return {
-        "message": "Memory Extraction & Personality API",
-        "endpoints": {
-            "POST /extract": "Extract memories from messages",
-            "POST /rewrite": "Rewrite text with personality",
-            "GET /health": "Health check"
-        }
-    }
+    return FileResponse("frontend/index.html")
 
 
 @app.get("/health")
@@ -144,4 +138,5 @@ app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
