@@ -330,14 +330,14 @@ async function generateResponse() {
         }
 
         const data = await response.json();
-        displayResponseResult(data.base_response, data.personalized_response, data.personality, data.method);
+        displayResponseResult(userMessage, data.base_response, data.personalized_response, data.personality, data.method);
     } catch (error) {
         console.error('Response generation error:', error);
         alert('Response generation failed: ' + error.message);
     }
 }
 
-function displayResponseResult(baseResponse, personalizedResponse, personality, method) {
+function displayResponseResult(userMessage, baseResponse, personalizedResponse, personality, method) {
     const container = document.getElementById('response-result');
 
     const methodBadge = method === 'llm'
@@ -350,6 +350,10 @@ function displayResponseResult(baseResponse, personalizedResponse, personality, 
             ${methodBadge}
         </div>
         <div class="response-comparison">
+            <div class="text-box user-query">
+                <h4>Your Question</h4>
+                <p>${userMessage}</p>
+            </div>
             <div class="text-box">
                 <h4>Before (Generic)</h4>
                 <p>${baseResponse}</p>
