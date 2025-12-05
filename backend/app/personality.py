@@ -108,63 +108,114 @@ class PersonalityEngine:
         emotional_patterns = memory.get("emotional_patterns", [])
         facts = memory.get("facts", [])
         
-        context_parts = []
-        
-        if preferences:
-            pref_values = []
-            for pref in preferences[:3]:
-                if isinstance(pref, dict):
-                    pref_values.append(pref.get("value", ""))
-                else:
-                    pref_values.append(str(pref))
-            
-            if pref_values:
-                pref_text = ", ".join(pref_values)
-                context_parts.append(f"I remember you prefer {pref_text}")
-        
-        if emotional_patterns:
-            negative_emotions = ["stress", "anxious", "overwhelmed", "frustrated", "overthinking"]
-            positive_emotions = ["appreciation", "grateful", "thankful", "happy"]
-            
-            patterns = [p.get("pattern", "") if isinstance(p, dict) else str(p) for p in emotional_patterns]
-            
-            if any(emotion in patterns for emotion in negative_emotions):
-                context_parts.append("I sense you might be feeling a bit overwhelmed lately")
-            elif any(emotion in patterns for emotion in positive_emotions):
-                context_parts.append("It's great to see your positive energy")
-        
-        if facts:
-            fact_values = []
-            for fact in facts[:2]:
-                if isinstance(fact, dict):
-                    fact_type = fact.get("fact_type", "")
-                    fact_value = fact.get("value", "")
-                    
-                    if fact_type == "location" and fact_value:
-                        fact_values.append(f"you're in {fact_value}")
-                    elif fact_type == "time" and fact_value:
-                        fact_values.append(f"it's {fact_value}")
-            
-            if fact_values:
-                context_parts.append(f"I know {' and '.join(fact_values)}")
-        
-        if context_parts:
-            base = f"{random.choice(context_parts)}. "
-        else:
-            base = ""
-        
         message_lower = user_message.lower()
         
-        if "stress" in message_lower or "overwhelm" in message_lower:
-            base += "It's important to take things one step at a time. Consider breaking down your tasks into smaller, manageable pieces."
-        elif "help" in message_lower:
-            base += "I'm here to support you. Let's work through this together and find the best approach."
-        elif "work" in message_lower:
-            base += "Finding the right work-life balance is key. Make sure you're taking care of yourself too."
-        else:
-            base += "Every challenge is an opportunity for growth. Stay focused on your goals."
+        context_parts = []
+        base_response = ""
         
-        return base
+        if "stress" in message_lower or "overwhelm" in message_lower or "anxious" in message_lower:
+            if emotional_patterns:
+                negative_emotions = ["stress", "anxious", "overwhelmed", "frustrated", "overthinking"]
+                patterns = [p.get("pattern", "") if isinstance(p, dict) else str(p) for p in emotional_patterns]
+                
+                if any(emotion in patterns for emotion in negative_emotions):
+                    context_parts.append("I notice you've been dealing with stress lately")
+            
+            base_response = "It's important to take things one step at a time. Consider breaking down your tasks into smaller, manageable pieces. Taking short breaks can also help reset your mind."
+        
+        elif "work" in message_lower or "project" in message_lower or "deadline" in message_lower:
+            if preferences:
+                work_prefs = []
+                for pref in preferences:
+                    if isinstance(pref, dict):
+                        value = pref.get("value", "")
+                        category = pref.get("category", "")
+                        if category in ["work", "communication", "time"]:
+                            work_prefs.append(value)
+                
+                if work_prefs:
+                    context_parts.append(f"I remember you prefer {', '.join(work_prefs[:2])}")
+            
+            base_response = "Finding the right work-life balance is key. Structure your tasks during your most productive hours and don't forget to take care of yourself."
+        
+        elif "learn" in message_lower or "study" in message_lower or "course" in message_lower:
+            base_response = "Learning new skills is always valuable. Start with what aligns with your goals and interests. Take it step by step, and practice consistently."
+        
+        elif "food" in message_lower or "eat" in message_lower or "cook" in message_lower or "dinner" in message_lower:
+            if preferences:
+                food_prefs = []
+                for pref in preferences:
+                    if isinstance(pref, dict):
+                        value = pref.get("value", "")
+                        category = pref.get("category", "")
+                        if category == "food":
+                            food_prefs.append(value)
+                
+                if food_prefs:
+                    context_parts.append(f"Given that you're {', '.join(food_prefs)}")
+            
+            if facts:
+                allergies = []
+                for fact in facts:
+                    if isinstance(fact, dict):
+                        fact_type = fact.get("fact_type", "")
+                        value = fact.get("value", "")
+                        if "allerg" in value.lower():
+                            allergies.append(value)
+                
+                if allergies:
+                    context_parts.append(f"and avoiding {', '.join(allergies)}")
+            
+            base_response = "Try to maintain a balanced diet with foods you enjoy. Planning meals ahead can reduce daily stress."
+        
+        elif "meeting" in message_lower or "call" in message_lower or "communicate" in message_lower:
+            if preferences:
+                comm_prefs = []
+                for pref in preferences:
+                    if isinstance(pref, dict):
+                        value = pref.get("value", "")
+                        category = pref.get("category", "")
+                        if category == "communication":
+                            comm_prefs.append(value)
+                
+                if comm_prefs:
+                    context_parts.append(f"I know you prefer {', '.join(comm_prefs)}")
+            
+            base_response = "Choose communication methods that work best for you. It's okay to set boundaries around your preferred style."
+        
+        elif "pet" in message_lower or "cat" in message_lower or "dog" in message_lower:
+            if facts:
+                pets = []
+                for fact in facts:
+                    if isinstance(fact, dict):
+                        value = fact.get("value", "")
+                        if any(word in value.lower() for word in ["cat", "dog", "pet", "luna"]):
+                            pets.append(value)
+                
+                if pets:
+                    context_parts.append(f"I remember you have {pets[0]}")
+            
+            base_response = "Pets can be wonderful companions but also need attention. Try setting specific times for play and work to maintain balance."
+        
+        elif "weekend" in message_lower or "activity" in message_lower or "do" in message_lower:
+            if facts:
+                for fact in facts:
+                    if isinstance(fact, dict):
+                        fact_type = fact.get("fact_type", "")
+                        value = fact.get("value", "")
+                        if fact_type == "location":
+                            context_parts.append(f"Since you're in {value}")
+                            break
+            
+            base_response = "Explore activities that interest you. Balance relaxation with things that energize you."
+        
+        else:
+            base_response = "That's a great question. Consider what aligns with your goals and values. Take your time to explore the options available to you."
+        
+        if context_parts:
+            return f"{', '.join(context_parts)}. {base_response}"
+        else:
+            return base_response
     
     def rewrite(self, text: str, personality: str) -> str:
         if personality not in self.personalities:

@@ -22,12 +22,24 @@ class Extractor:
             "pet": re.compile(r"\b(cat|dog|pet)\b(?:\s+(\w+))?", re.IGNORECASE),
             "prefer text": re.compile(r"\bprefer.*(text|async|writing)\b", re.IGNORECASE),
             "direct communication": re.compile(r"\bdirect\s+communication\b", re.IGNORECASE),
+            "early bird": re.compile(r"\b(morning person|early bird|wake up early)\b", re.IGNORECASE),
+            "introvert": re.compile(r"\b(introvert|introverted|prefer alone time)\b", re.IGNORECASE),
+            "extrovert": re.compile(r"\b(extrovert|extroverted|love socializing)\b", re.IGNORECASE),
+            "remote work": re.compile(r"\b(remote work|work from home|wfh)\b", re.IGNORECASE),
+            "coffee lover": re.compile(r"\b(love coffee|coffee addict|need coffee)\b", re.IGNORECASE),
+            "tea lover": re.compile(r"\b(love tea|tea person|prefer tea)\b", re.IGNORECASE),
+            "exercise": re.compile(r"\b(gym|workout|exercise|fitness)\b", re.IGNORECASE),
+            "reading": re.compile(r"\b(love reading|enjoy books|bookworm)\b", re.IGNORECASE),
         }
         
         self.emotional_keywords = {
             "stress": re.compile(r"\b(stressed|anxious|overwhelmed|frustrated)\b", re.IGNORECASE),
             "appreciation": re.compile(r"\b(appreciate|grateful|thankful)\b", re.IGNORECASE),
             "overthinking": re.compile(r"\boverthink\b", re.IGNORECASE),
+            "excited": re.compile(r"\b(excited|thrilled|looking forward)\b", re.IGNORECASE),
+            "tired": re.compile(r"\b(tired|exhausted|burned out)\b", re.IGNORECASE),
+            "happy": re.compile(r"\b(happy|joyful|delighted)\b", re.IGNORECASE),
+            "confused": re.compile(r"\b(confused|unsure|uncertain)\b", re.IGNORECASE),
         }
     
     def extract(self, messages: List[Dict[str, Any]]) -> Dict[str, Any]:
@@ -136,6 +148,14 @@ class Extractor:
             "works late": "work_style",
             "prefer text": "communication",
             "direct communication": "communication",
+            "early bird": "work_style",
+            "introvert": "personality",
+            "extrovert": "personality",
+            "remote work": "work_style",
+            "coffee lover": "food",
+            "tea lover": "food",
+            "exercise": "lifestyle",
+            "reading": "hobby",
         }
         return category_map.get(pref_name, "general")
     
