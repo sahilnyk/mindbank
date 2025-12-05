@@ -43,6 +43,13 @@ class RewriteRequest(BaseModel):
     use_llm: bool = Field(default=False, description="Use LLM for rewriting if available")
 
 
+class GenerateResponseRequest(BaseModel):
+    memory: Dict[str, Any]
+    user_message: str
+    personality: str = Field(..., description="One of: calm_mentor, witty_friend, therapist")
+    use_llm: bool = Field(default=False, description="Use LLM for generation")
+
+
 @app.get("/")
 def root():
     return FileResponse("frontend/index.html")
@@ -92,6 +99,47 @@ def extract_memories(request: ExtractRequest):
         raise
     except Exception as e:
         logger.error(f"Extraction error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/generate-response")
+def generate_response(request: GenerateResponseRequest):
+    valid_personalities = ["calm_mentor", "witty_friend", "therapist"]
+    if request.personality not in valid_personalities:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid personality. Must be one of: {', '.join(valid_personalities)}"
+        )
+    
+    try:
+        base_response = personality_engine.generate_memory_aware_response(
+            request.memory, 
+            request.user_message
+        )
+        
+        if request.use_llm and llm_client.is_available():
+            logger.info(f"Using LLM for response generation with personality: {request.personality}")
+            try:
+                personalized = llm_client.rewrite_with_personality(base_response, request.personality)
+            except NoLLMAvailable as e:
+                logger.warning(f"LLM rewrite failed: {e}. Falling back to deterministic.")
+                personalized = personality_engine.rewrite(base_response, request.personality)
+        else:
+            logger.info(f"Using deterministic rewriting with personality: {request.personality}")
+            personalized = personality_engine.rewrite(base_response, request.personality)
+        
+        return {
+            "success": True,
+            "base_response": base_response,
+            "personalized_response": personalized,
+            "personality": request.personality,
+            "method": "llm" if (request.use_llm and llm_client.is_available()) else "deterministic"
+        }
+    
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Response generation error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 

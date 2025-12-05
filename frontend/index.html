@@ -21,7 +21,7 @@
                     <i class="fas fa-book"></i>
                     <span>API Docs</span>
                 </a>
-                <a href="https://github.com/yourusername/your-repo" class="header-link" target="_blank"
+                <a href="https://github.com/sahilnyk/mindbank" class="header-link" target="_blank"
                     title="View Source Code">
                     <i class="fab fa-github"></i>
                     <span>Code</span>
@@ -32,11 +32,14 @@
         <div class="tabs">
             <button class="tab-button active" onclick="showTab('extract')">Memory Extraction</button>
             <button class="tab-button" onclick="showTab('rewrite')">Personality Engine</button>
+            <button class="tab-button" onclick="showTab('response')">Agent Response</button>
         </div>
 
         <div id="extract-tab" class="tab-content active">
             <div class="card">
                 <h2>Extract User Memory</h2>
+                <p class="helper-text">Extract preferences, emotions, and facts from conversation messages to build a
+                    user profile.</p>
 
                 <div class="action-buttons">
                     <button onclick="load30Messages()" class="btn btn-secondary">
@@ -58,7 +61,7 @@
                 <div class="options">
                     <label>
                         <input type="checkbox" id="extract-use-llm">
-                        Use LLM for extraction
+                        Use LLM for extraction (requires API key)
                     </label>
                 </div>
 
@@ -73,6 +76,8 @@
         <div id="rewrite-tab" class="tab-content">
             <div class="card">
                 <h2>Personality Engine</h2>
+                <p class="helper-text">Transform any text to match different communication styles and personalities.</p>
+
                 <textarea id="rewrite-input" placeholder="We need to finish this by Friday" rows="4"></textarea>
 
                 <div class="personality-selector">
@@ -93,7 +98,7 @@
                 <div class="options">
                     <label>
                         <input type="checkbox" id="rewrite-use-llm">
-                        Use LLM for rewriting
+                        Use LLM for rewriting (requires API key)
                     </label>
                 </div>
 
@@ -103,6 +108,49 @@
             </div>
 
             <div id="rewrite-result" class="result-container"></div>
+        </div>
+
+        <div id="response-tab" class="tab-content">
+            <div class="card">
+                <h2>Generate Memory-Aware Response</h2>
+                <p class="helper-text">Create personalized responses based on extracted user memories and preferences.
+                </p>
+
+                <div class="info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Extract memories first from the Memory Extraction tab</span>
+                </div>
+
+                <textarea id="user-message-input" placeholder="How should I handle my work stress?" rows="3"></textarea>
+
+                <div class="personality-selector">
+                    <label>Select Response Style:</label>
+                    <div class="personality-buttons">
+                        <button class="personality-btn active" data-personality="calm_mentor">
+                            Calm Mentor
+                        </button>
+                        <button class="personality-btn" data-personality="witty_friend">
+                            Witty Friend
+                        </button>
+                        <button class="personality-btn" data-personality="therapist">
+                            Therapist
+                        </button>
+                    </div>
+                </div>
+
+                <div class="options">
+                    <label>
+                        <input type="checkbox" id="response-use-llm">
+                        Use LLM for generation (requires API key)
+                    </label>
+                </div>
+
+                <button onclick="generateResponse()" class="btn btn-success btn-large">
+                    Generate Response
+                </button>
+            </div>
+
+            <div id="response-result" class="result-container"></div>
         </div>
 
         <footer>

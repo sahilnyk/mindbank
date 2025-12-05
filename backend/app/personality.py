@@ -1,6 +1,7 @@
 import re
 from abc import ABC, abstractmethod
-from typing import Dict
+from typing import Dict, Any
+import random
 
 
 class RewriteStrategy(ABC):
@@ -25,7 +26,6 @@ class CalmMentorStrategy(RewriteStrategy):
         text = text.replace("you must", "it would be wise to")
         text = text.replace("do this", "explore this approach")
         
-        import random
         template = random.choice(templates)
         return template.format(text.capitalize())
 
@@ -41,7 +41,6 @@ class WittyFriendStrategy(RewriteStrategy):
         text = text.replace("Yes", "Yep")
         text = text.replace("No", "Nah")
         
-        import random
         emoji = random.choice(emojis)
         
         casual_endings = [
@@ -71,7 +70,6 @@ class TherapistStrategy(RewriteStrategy):
             " What would support you right now?"
         ]
         
-        import random
         validation = random.choice(validations)
         question = random.choice(questions)
         
@@ -79,51 +77,107 @@ class TherapistStrategy(RewriteStrategy):
 
 
 class PersonalityEngine:
-    
     def __init__(self):
-        self.strategies: Dict[str, RewriteStrategy] = {
-            "calm_mentor": CalmMentorStrategy(),
-            "witty_friend": WittyFriendStrategy(),
-            "therapist": TherapistStrategy()
+        self.personalities = {
+            "calm_mentor": {
+                "tone": "wise, patient, encouraging",
+                "phrases": [
+                    "I understand that", "It's natural to", "Consider this perspective",
+                    "Take your time with", "You're making progress", "Let me guide you through"
+                ]
+            },
+            "witty_friend": {
+                "tone": "casual, humorous, relatable",
+                "phrases": [
+                    "Haha, I feel you!", "That's hilarious!", "No joke though",
+                    "Real talk:", "Honestly though", "You know what's funny?"
+                ]
+            },
+            "therapist": {
+                "tone": "empathetic, validating, reflective",
+                "phrases": [
+                    "I hear you saying", "That must feel", "It sounds like",
+                    "How does that make you feel?", "Let's explore that",
+                    "Your feelings are valid"
+                ]
+            }
         }
     
-    def rewrite(self, neutral_text: str, personality: str) -> str:
-        if personality not in self.strategies:
+    def generate_memory_aware_response(self, memory: Dict[str, Any], user_message: str) -> str:
+        preferences = memory.get("preferences", [])
+        emotional_patterns = memory.get("emotional_patterns", [])
+        facts = memory.get("facts", [])
+        
+        context_parts = []
+        
+        if preferences:
+            pref_values = []
+            for pref in preferences[:3]:
+                if isinstance(pref, dict):
+                    pref_values.append(pref.get("value", ""))
+                else:
+                    pref_values.append(str(pref))
+            
+            if pref_values:
+                pref_text = ", ".join(pref_values)
+                context_parts.append(f"I remember you prefer {pref_text}")
+        
+        if emotional_patterns:
+            negative_emotions = ["stress", "anxious", "overwhelmed", "frustrated", "overthinking"]
+            positive_emotions = ["appreciation", "grateful", "thankful", "happy"]
+            
+            patterns = [p.get("pattern", "") if isinstance(p, dict) else str(p) for p in emotional_patterns]
+            
+            if any(emotion in patterns for emotion in negative_emotions):
+                context_parts.append("I sense you might be feeling a bit overwhelmed lately")
+            elif any(emotion in patterns for emotion in positive_emotions):
+                context_parts.append("It's great to see your positive energy")
+        
+        if facts:
+            fact_values = []
+            for fact in facts[:2]:
+                if isinstance(fact, dict):
+                    fact_type = fact.get("fact_type", "")
+                    fact_value = fact.get("value", "")
+                    
+                    if fact_type == "location" and fact_value:
+                        fact_values.append(f"you're in {fact_value}")
+                    elif fact_type == "time" and fact_value:
+                        fact_values.append(f"it's {fact_value}")
+            
+            if fact_values:
+                context_parts.append(f"I know {' and '.join(fact_values)}")
+        
+        if context_parts:
+            base = f"{random.choice(context_parts)}. "
+        else:
+            base = ""
+        
+        message_lower = user_message.lower()
+        
+        if "stress" in message_lower or "overwhelm" in message_lower:
+            base += "It's important to take things one step at a time. Consider breaking down your tasks into smaller, manageable pieces."
+        elif "help" in message_lower:
+            base += "I'm here to support you. Let's work through this together and find the best approach."
+        elif "work" in message_lower:
+            base += "Finding the right work-life balance is key. Make sure you're taking care of yourself too."
+        else:
+            base += "Every challenge is an opportunity for growth. Stay focused on your goals."
+        
+        return base
+    
+    def rewrite(self, text: str, personality: str) -> str:
+        if personality not in self.personalities:
             raise ValueError(f"Unknown personality: {personality}")
         
-        strategy = self.strategies[personality]
-        rewritten = strategy.rewrite(neutral_text)
+        profile = self.personalities[personality]
+        prefix = random.choice(profile["phrases"])
         
-        critical_tokens = self._extract_critical_tokens(neutral_text)
-        rewritten = self._preserve_critical_tokens(rewritten, critical_tokens)
+        if personality == "calm_mentor":
+            return f"{prefix}. {text} Remember, growth takes time and patience."
+        elif personality == "witty_friend":
+            return f"{prefix} {text} But hey, you got this! 💪"
+        elif personality == "therapist":
+            return f"{prefix}. {text} How are you feeling about this?"
         
-        return rewritten
-    
-    def _extract_critical_tokens(self, text: str) -> list:
-        critical = []
-        
-        date_pattern = r'\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b|\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:st|nd|rd|th)?\b'
-        dates = re.findall(date_pattern, text, re.IGNORECASE)
-        critical.extend(dates)
-        
-        time_pattern = r'\b\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)?\b'
-        times = re.findall(time_pattern, text)
-        critical.extend(times)
-        
-        name_pattern = r'\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b'
-        names = re.findall(name_pattern, text)
-        critical.extend(names)
-        
-        return critical
-    
-    def _preserve_critical_tokens(self, rewritten: str, critical_tokens: list) -> str:
-        missing_tokens = []
-        
-        for token in critical_tokens:
-            if token.lower() not in rewritten.lower():
-                missing_tokens.append(token)
-        
-        if missing_tokens:
-            rewritten += f" (Important: {', '.join(missing_tokens)})"
-        
-        return rewritten
+        return text

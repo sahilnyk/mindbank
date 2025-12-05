@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cascadia+Code:wght@400;500&display=swap');
 
 * {
     margin: 0;
@@ -6,8 +6,12 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
-    font-family: 'Source Code Pro', monospace;
+    font-family: 'Cascadia Code', monospace;
     background: #000000;
     color: #e5e5e5;
     min-height: 100vh;
@@ -25,7 +29,7 @@ body::before {
     bottom: 0;
     z-index: -2;
     background-color: #000000;
-    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.09) 1px, transparent 1px);
     background-size: 20px 20px;
     pointer-events: none;
 }
@@ -57,7 +61,7 @@ header {
 .header-left .tagline {
     font-size: 0.85rem;
     color: #777777;
-    font-weight: 300;
+    font-weight: 400;
 }
 
 .header-right {
@@ -71,7 +75,7 @@ header {
     font-size: 0.8rem;
     color: #777777;
     text-decoration: none;
-    font-weight: 300;
+    font-weight: 400;
     transition: color 0.3s;
     display: flex;
     align-items: center;
@@ -101,7 +105,7 @@ header {
     transition: color 0.3s;
     border-bottom: 2px solid transparent;
     margin-bottom: -1px;
-    font-family: 'Source Code Pro', monospace;
+    font-family: 'Cascadia Code', monospace;
 }
 
 .tab-button:hover {
@@ -134,7 +138,31 @@ header {
     font-size: 1.1rem;
     font-weight: 500;
     color: #ffffff;
+    margin-bottom: 12px;
+}
+
+.helper-text {
+    font-size: 0.8rem;
+    color: #777777;
     margin-bottom: 28px;
+    line-height: 1.5;
+}
+
+.info-box {
+    background: rgba(100, 150, 255, 0.1);
+    border: 1px solid rgba(100, 150, 255, 0.2);
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 0.8rem;
+    color: #8ba3ff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.info-box i {
+    font-size: 1rem;
 }
 
 .action-buttons {
@@ -151,7 +179,7 @@ textarea {
     border: 1px solid #1a1a1a;
     border-radius: 6px;
     font-size: 0.85rem;
-    font-family: 'Source Code Pro', monospace;
+    font-family: 'Cascadia Code', monospace;
     color: #e5e5e5;
     resize: vertical;
     transition: all 0.3s;
@@ -166,7 +194,7 @@ textarea:focus {
 
 textarea::placeholder {
     color: #4a4a4a;
-    font-weight: 300;
+    font-weight: 400;
 }
 
 .btn {
@@ -179,7 +207,7 @@ textarea::placeholder {
     transition: all 0.3s;
     background: rgba(26, 26, 26, 0.8);
     color: #e5e5e5;
-    font-family: 'Source Code Pro', monospace;
+    font-family: 'Cascadia Code', monospace;
 }
 
 .btn:disabled {
@@ -249,6 +277,7 @@ textarea::placeholder {
     margin-bottom: 28px;
     max-height: 380px;
     overflow-y: auto;
+    scroll-behavior: smooth;
 }
 
 .messages-list::-webkit-scrollbar {
@@ -281,13 +310,13 @@ textarea::placeholder {
 .message-item {
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid #1a1a1a;
-    padding: 14px;
+    padding: 14px 16px;
     border-radius: 6px;
     margin-bottom: 10px;
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    gap: 14px;
+    display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 12px;
 }
 
 .message-text {
@@ -295,7 +324,7 @@ textarea::placeholder {
     color: #cccccc;
     word-wrap: break-word;
     line-height: 1.5;
-    font-weight: 300;
+    font-weight: 400;
 }
 
 .message-index {
@@ -333,7 +362,7 @@ textarea::placeholder {
     color: #777777;
     cursor: pointer;
     transition: all 0.3s;
-    font-family: 'Source Code Pro', monospace;
+    font-family: 'Cascadia Code', monospace;
 }
 
 .personality-btn:hover {
@@ -358,7 +387,7 @@ textarea::placeholder {
     font-size: 0.8rem;
     color: #777777;
     cursor: pointer;
-    font-weight: 300;
+    font-weight: 400;
 }
 
 .options input[type="checkbox"] {
@@ -437,26 +466,74 @@ textarea::placeholder {
 
 .memory-item {
     background: rgba(0, 0, 0, 0.4);
-    padding: 14px;
+    padding: 14px 16px;
     border-radius: 6px;
-    border-left: 2px solid #2a2a2a;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     line-height: 1.6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.memory-item .item-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.memory-item .category-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    font-weight: 400;
+    text-transform: capitalize;
+    letter-spacing: 0.02em;
+    background: rgba(255, 255, 255, 0.08);
+    color: #999999;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.memory-item .item-value {
+    color: #e5e5e5;
+    font-weight: 400;
 }
 
 .memory-item strong {
     color: #ffffff;
-    font-weight: 400;
+    font-weight: 500;
 }
 
 .confidence {
     display: inline-block;
-    background: rgba(26, 26, 26, 0.8);
-    color: #777777;
-    padding: 2px 8px;
-    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.08);
+    color: #888888;
+    padding: 4px 10px;
+    border-radius: 4px;
     font-size: 0.65rem;
-    margin-left: 8px;
+    font-weight: 400;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    white-space: nowrap;
+}
+
+.confidence.high {
+    background: rgba(100, 255, 150, 0.12);
+    color: #70ffa6;
+    border-color: rgba(100, 255, 150, 0.25);
+}
+
+.confidence.medium {
+    background: rgba(255, 200, 100, 0.12);
+    color: #ffb870;
+    border-color: rgba(255, 200, 100, 0.25);
+}
+
+.confidence.low {
+    background: rgba(255, 100, 100, 0.15);
+    color: #ff7070;
+    border-color: rgba(255, 100, 100, 0.3);
 }
 
 .memory-item small {
@@ -473,7 +550,6 @@ textarea::placeholder {
     background: rgba(0, 0, 0, 0.4);
     padding: 20px;
     border-radius: 6px;
-    border-left: 2px solid #2a2a2a;
 }
 
 .text-box h4 {
@@ -489,7 +565,22 @@ textarea::placeholder {
     font-size: 0.9rem;
     line-height: 1.7;
     color: #cccccc;
-    font-weight: 300;
+    font-weight: 400;
+}
+
+.response-comparison {
+    display: grid;
+    gap: 20px;
+    margin-top: 28px;
+}
+
+.comparison-header {
+    color: #cccccc;
+    margin-bottom: 20px;
+    font-size: 0.75rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
 }
 
 footer {
@@ -575,5 +666,35 @@ footer {
     .tab-button {
         flex: 1;
         min-width: 130px;
+    }
+
+    .memory-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .memory-item .item-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-left h1 {
+        font-size: 1.2rem;
+    }
+
+    .card {
+        padding: 20px;
+    }
+
+    .tab-button {
+        padding: 12px 16px;
+        font-size: 0.75rem;
+        min-width: 100px;
+    }
+
+    .btn {
+        font-size: 0.75rem;
     }
 }
