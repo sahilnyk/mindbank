@@ -196,49 +196,6 @@ Same core advice → three different tones.
 
 ---
 
-## Running Locally
-
-```bash
-git clone <repo-url>
-cd MindBank
-pip install -r requirements.txt
-python -m spacy download en_core_web_sm
-
-uvicorn main:app --reload --port 8000
-```
-
-Open `http://localhost:8000`
-
----
-
-## Deploying on Render
-
-Free tier works.
-
-Build command:
-```bash
-pip install -r requirements.txt && python -m spacy download en_core_web_sm
-```
-
-Start command:
-```bash
-uvicorn main:app --host 0.0.0.0 --port $PORT
-```
-
-Push to GitHub → connect to Render → deploy. Done.
-
----
-
-## Testing
-
-```bash
-pytest tests/ -v
-```
-
-Covers extraction accuracy, personality transforms, API validation, error handling.
-
----
-
 ## What Gets Extracted
 
 **Preferences:** vegetarian, works late, hates meetings, prefers async, has pet, introvert/extrovert, coffee person, exercises, reads
