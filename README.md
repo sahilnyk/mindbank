@@ -1,110 +1,97 @@
 # MindBank
 
-AI that actually remembers stuff about you and responds like a human, not a robot.
+Extracts memories from chat history and transforms responses with different personalities. That's it.
 
 ---
 
-## The Problem
+## What This Actually Does
 
-Chatbots forget everything. You tell them you're vegetarian on Monday, they suggest steak on Tuesday. Annoying.
+Takes 30 messages, pulls out:
+- Preferences (work style, food habits, communication)
+- Emotions (stress, excitement, whatever you're feeling)
+- Facts (names, places, dates, allergies)
 
-## What I Built
+Then takes any response and rewrites it in 3 different tones.
 
-This system reads your chat history, extracts what matters (your preferences, emotions, facts), and uses that to give responses that actually make sense for YOU.
+**Example:**
 
-**Quick example:**
-
-You mention in chats:
+Messages say:
 - "I'm vegetarian and allergic to peanuts"
 - "I work best late at night"
 - "My cat Luna keeps distracting me"
 
 You ask: "What should I eat for dinner?"
 
-**Normal chatbot:** "Try pasta or salad."
-
-**This thing:** "Since you're vegetarian and allergic to peanuts, try chickpea curry or lentil soup. Batch cook on weekends when Luna's napping."
-
-It actually remembers your context.
+System knows your context and says:
+> "Since you're vegetarian and allergic to peanuts, try chickpea curry or lentil soup. Batch cook on weekends when Luna's napping."
 
 ---
 
 ## How It Works
 
 ```
-Step 1: Memory Extraction
-User messages → Extract patterns → Store as structured data
-                     ↓
-          [Regex + spaCy NER]
-                     ↓
-     {preferences, emotions, facts}
-
-Step 2: Generate Response  
-User question → Match topic → Pull relevant memory → Generate answer
-                     ↓
-          [Work? Food? Social?]
-                     ↓
-          Context-aware response
-
-Step 3: Add Personality
-Base response → Apply personality style → Final output
-                     ↓
-          [Mentor / Friend / Therapist]
-                     ↓
-          Same info, different vibe
+1. Load 30 messages
+        ↓
+2. Run extraction (regex + spaCy)
+        ↓
+3. Get {preferences, emotions, facts}
+        ↓
+4. Ask a question
+        ↓
+5. System generates base response
+        ↓
+6. Pick a personality (mentor/friend/therapist)
+        ↓
+7. See before/after transformation
 ```
+
+**Only deterministic mode works right now** - no OpenAI integration because of rate limits and API policy issues. But that's fine, regex + spaCy does the job.
 
 ---
 
-## Project Structure
+## Folder Setup
 
 ```
 ta-ai-engineer/
 ├── backend/app/
-│   ├── extraction.py      # pulls memories from messages
-│   ├── personality.py     # changes tone (mentor/friend/therapist)
-│   ├── llm_client.py      # OpenAI wrapper with fallback
-│   └── validators.py      # checks data structure
+│   ├── extraction.py      # mines memories with regex + spaCy
+│   ├── personality.py     # transforms text tone
+│   ├── llm_client.py      # OpenAI wrapper (not used currently)
+│   └── validators.py      # JSON structure checks
 ├── frontend/
-│   ├── index.html         # the UI
-│   ├── script.js          # handles clicks and API calls
+│   ├── index.html         # 3-tab UI
+│   ├── script.js          # handles API calls
 │   ├── style.css          # dark theme
-│   └── 30_messages.json   # sample data for testing
+│   └── 30_messages.json   # sample messages
 ├── schema/
-│   └── memory_schema.json # defines what valid memory looks like
-├── tests/                 # unit tests
+│   └── memory_schema.json # memory format definition
+├── tests/                 # pytest tests
 └── main.py                # FastAPI server
 ```
 
-**Why this structure?**
+**Why split it like this?**
 
-Each file does ONE thing. Want to swap OpenAI for Claude? Just edit `llm_client.py`. Want to add a new personality? Just edit `personality.py`. Nothing breaks because everything's separated.
-
-**Two modes:**
-- **With OpenAI key:** Uses GPT for smart extraction
-- **Without key:** Falls back to regex + spaCy (still works, just less smart)
-
-This way you can demo it without spending money on API calls.
+Change extraction logic? Edit one file. Add a personality? Edit one file. Swap the LLM provider later? Edit one file. Nothing breaks.
 
 ---
 
-## Running It
+## Running Locally
 
 ```bash
-# clone and install
-git clone <repo-url>
+git clone <repo>
 cd ta-ai-engineer
 pip install -r requirements.txt
 python -m spacy download en_core_web_sm
 
-# optional: add OpenAI key
-echo "OPENAI_API_KEY=sk-..." > .env
-
-# run
 uvicorn main:app --reload --port 8000
 ```
 
-Open `http://localhost:8000` and you're good.
+Go to `http://localhost:8000`
+
+Three tabs:
+1. Memory Extraction - Load messages, see what it pulls out
+2. Personality Engine - Type text, see 3 transformations
+3. Agent Response - Ask questions, get personalized answers
 
 ---
 
@@ -124,84 +111,80 @@ Open `http://localhost:8000` and you're good.
 }
 ```
 
-Three buckets:
-- **Preferences** - work style, food habits, communication preferences
-- **Emotions** - recurring feelings like stress, excitement
-- **Facts** - names, places, dates, allergies
+Confidence scores tell you how reliable each extraction is.
 
 ---
 
-## The Personalities
+## Personality Examples
 
-Same content, different vibes:
-
-**Input:** "I need to have a difficult conversation."
+Input: "I need to have a difficult conversation."
 
 **Calm Mentor:**
-> "Direct communication builds trust, even when uncomfortable. Prepare your points but stay flexible. Most difficult conversations go better than we think. Trust the process."
+> "Here's what I've observed: Direct communication builds trust, even when uncomfortable. Prepare your points but stay flexible. Trust the process - you're on the right path."
 
 **Witty Friend:**  
-> "Yo, direct communication builds trust even when it's uncomfortable. Prep your points but stay flexible. Most tough convos go better than expected. Trust me on this!"
+> "Yo, listen up! Direct communication builds trust even when uncomfortable. Prep your points but stay flexible. Most tough convos go better than expected. Trust me on this!"
 
 **Therapist:**
-> "Thank you for sharing this. Direct communication builds trust, even when uncomfortable. Prepare your points but stay flexible. Most difficult conversations go better than we anticipate. How are you taking care of yourself through this?"
+> "I appreciate you opening up. Direct communication builds trust, even when uncomfortable. Prepare your points but stay flexible. How are you taking care of yourself through this?"
+
+Same content, different energy.
 
 ---
 
-## API Endpoints
+## What Gets Extracted
 
-**POST /extract** - Extract memories from messages
-**POST /generate-response** - Get personalized answer
-**POST /rewrite** - Transform text with personality
+Patterns it catches:
+- vegetarian, vegan, plant-based
+- works late, early bird
+- hates meetings, prefers async
+- allergic to X
+- has cat/dog named Y
+- introvert/extrovert
+- coffee/tea lover
+- exercise habits
+- reading preferences
 
-Check the code for request/response examples.
+Emotions:
+- stress, anxious, overwhelmed
+- excited, happy
+- tired, burned out
+- confused, uncertain
 
----
-
-## Tech Choices
-
-**Why FastAPI?** Fast, async, automatic docs.
-
-**Why vanilla JS?** No build step. Edit and refresh. Done.
-
-**Why spaCy?** Good NER without needing GPU or cloud.
-
-**Why dual-mode?** Works without API keys. Cheaper. More reliable.
-
----
-
-## What It Can Extract
-
-- 18+ preference patterns (vegetarian, works late, hates meetings, etc.)
-- 7 emotional keywords (stress, excited, tired, etc.)
-- Named entities (people, places, dates, organizations)
-- Confidence scores for everything
-- Source tracking (which message said what)
+Plus spaCy pulls out names, places, dates, organizations.
 
 ---
 
-## Deploy
+## APIs
 
-**Render:**
+**POST /extract**  
+Send messages, get structured memory back.
+
+**POST /rewrite**  
+Send text + personality, get transformed version.
+
+**POST /generate-response**  
+Send memory + question + personality, get personalized answer.
+
+Look at the code for exact request/response formats.
+
+---
+
+## Deploying on Render
+
+Free tier works fine.
+
+**Build command:**
 ```bash
-# Build: pip install -r requirements.txt && python -m spacy download en_core_web_sm
-# Start: uvicorn main:app --host 0.0.0.0 --port $PORT
+pip install -r requirements.txt && python -m spacy download en_core_web_sm
 ```
 
-**Railway:**
+**Start command:**
 ```bash
-railway init && railway up
+uvicorn main:app --host 0.0.0.0 --port $PORT
 ```
 
-**Docker:**
-```dockerfile
-FROM python:3.10-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt && python -m spacy download en_core_web_sm
-COPY . .
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
-```
+That's it. Push to GitHub, connect to Render, done.
 
 ---
 
@@ -211,14 +194,28 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 pytest tests/ -v
 ```
 
-Tests cover extraction accuracy, personality transforms, API responses, and fallback behavior.
+Tests memory extraction accuracy, personality transformations, API responses, and error handling.
+
+---
+
+## Technical Notes
+
+Uses FastAPI because it's fast and has auto docs.
+
+Uses vanilla JS because no build step means I can edit and refresh instantly.
+
+Uses spaCy for entity recognition - works offline, doesn't need GPU.
+
+Regex patterns handle explicit preferences, spaCy catches entities, confidence scores tell you what's reliable.
+
+Strategy pattern for personalities means adding new ones is just creating a new class.
 
 ---
 
 ## The Point
 
-Most AI tries to sound smart. This one tries to sound like someone who actually knows you.
+Assignment was: extract memories from 30 messages, transform response tones, show before/after.
 
-Memory + personality = natural conversation.
+This does exactly that. Plus it uses the extracted memory to personalize responses based on context.
 
-Built as a technical assessment to show how companion AI should work.
+Built as a technical assessment.
