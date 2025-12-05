@@ -35,7 +35,7 @@ See the difference? It actually remembers your context.
 ## How It's Built
 
 ```
-ta-ai-engineer/
+mindbank/
 ├── backend/app/          # Core logic separated by function
 │   ├── extraction.py     # Mines memories from conversations
 │   ├── personality.py    # Transforms tone (mentor vs friend vs therapist)
