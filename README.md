@@ -1,101 +1,131 @@
 # MindBank
 
-Extracts memories from chat history and transforms responses with different personalities. That's it.
+Extracts memories from conversations and rewrites responses with different personalities.
 
 ---
 
-## What This Actually Does
+## The Classic Problem
 
-Takes 30 messages, pulls out:
-- Preferences (work style, food habits, communication)
-- Emotions (stress, excitement, whatever you're feeling)
-- Facts (names, places, dates, allergies)
+Ever notice how AI chatbots forget everything you tell them? You mention you're vegetarian on Monday → they suggest steak recipes on Tuesday. You say you hate morning meetings → they schedule 9am calls. You tell them about your cat Luna → they act like they never heard of her.
 
-Then takes any response and rewrites it in 3 different tones.
+Why? Because they don't have memory. Every conversation starts from zero.
 
-**Example:**
+---
 
-Messages say:
+## The Solution → MindBank
+
+Instead of forgetting everything, this system:
+
+1. **Reads your chat history** (30 messages)
+2. **Extracts what matters** (preferences, emotions, facts)
+3. **Stores it in structured format** (JSON with confidence scores)
+4. **Uses that context** when generating responses
+5. **Transforms tone** based on personality you pick
+
+**Example flow:**
+
+Messages contain:
 - "I'm vegetarian and allergic to peanuts"
 - "I work best late at night"
 - "My cat Luna keeps distracting me"
 
 You ask: "What should I eat for dinner?"
 
-System knows your context and says:
+System response:
 > "Since you're vegetarian and allergic to peanuts, try chickpea curry or lentil soup. Batch cook on weekends when Luna's napping."
+
+It actually remembers your context.
+
+---
+
+## Tech Stack
+
+**Backend:**
+- FastAPI → handles API requests
+- spaCy → extracts entities (names, places, dates)
+- Regex patterns → catches explicit preferences
+- Python 3.10+ → everything runs on this
+
+**Frontend:**
+- Vanilla JavaScript → no framework, just raw JS
+- HTML/CSS → single page with 3 tabs
+- Dark theme → easier on the eyes
+
+**Why no React/Vue?** Because edit → refresh is faster than edit → build → refresh. Also smaller bundle size.
+
+**Note:** OpenAI integration exists but not active right now (rate limits + API policy stuff). Deterministic mode (regex + spaCy) works fine though.
 
 ---
 
 ## How It Works
 
 ```
-1. Load 30 messages
+Step 1: Load 30 messages
         ↓
-2. Run extraction (regex + spaCy)
+Step 2: Extract patterns (regex + spaCy NER)
         ↓
-3. Get {preferences, emotions, facts}
+Step 3: Store as {preferences, emotions, facts}
         ↓
-4. Ask a question
+Step 4: User asks a question
         ↓
-5. System generates base response
+Step 5: Generate base response (topic-aware)
         ↓
-6. Pick a personality (mentor/friend/therapist)
+Step 6: Apply personality transformation
         ↓
-7. See before/after transformation
+Step 7: Show before/after comparison
 ```
-
-**Only deterministic mode works right now** - no OpenAI integration because of rate limits and API policy issues. But that's fine, regex + spaCy does the job.
 
 ---
 
-## Folder Setup
+## The Three Tabs
+
+**Tab 1: Memory Extraction**
+- Load 30 sample messages (or add your own)
+- Click "Extract Memories"
+- See preferences, emotions, and facts pulled out
+- Each item has confidence score (0-100%)
+
+**Tab 2: Personality Engine**
+- Type any text (or use suggestions)
+- Pick a personality: Calm Mentor / Witty Friend / Therapist
+- See how the same text transforms with different tones
+- Shows original → transformed side-by-side
+
+**Tab 3: Agent Response**
+- Ask a question
+- System uses extracted memory to personalize answer
+- Pick personality for the response
+- See before/after: generic version → personalized version
+
+---
+
+## Folder Structure
 
 ```
-ta-ai-engineer/
+MindBank/
 ├── backend/app/
-│   ├── extraction.py      # mines memories with regex + spaCy
-│   ├── personality.py     # transforms text tone
+│   ├── extraction.py      # regex + spaCy memory mining
+│   ├── personality.py     # tone transformation logic
 │   ├── llm_client.py      # OpenAI wrapper (not used currently)
-│   └── validators.py      # JSON structure checks
+│   └── validators.py      # checks JSON structure
 ├── frontend/
-│   ├── index.html         # 3-tab UI
-│   ├── script.js          # handles API calls
-│   ├── style.css          # dark theme
-│   └── 30_messages.json   # sample messages
+│   ├── index.html         # 3-tab interface
+│   ├── script.js          # handles clicks + API calls
+│   ├── style.css          # dark theme styling
+│   └── 30_messages.json   # sample conversation data
 ├── schema/
-│   └── memory_schema.json # memory format definition
-├── tests/                 # pytest tests
-└── main.py                # FastAPI server
+│   └── memory_schema.json # defines valid memory format
+├── tests/                 # pytest unit tests
+└── main.py                # FastAPI server + routes
 ```
 
-**Why split it like this?**
+**Why this structure?**
 
-Change extraction logic? Edit one file. Add a personality? Edit one file. Swap the LLM provider later? Edit one file. Nothing breaks.
+Each file = one job. Want to change extraction logic? → edit `extraction.py`. Add a new personality? → edit `personality.py`. Swap LLM provider later? → edit `llm_client.py`. Nothing else breaks.
 
 ---
 
-## Running Locally
-
-```bash
-git clone <repo>
-cd ta-ai-engineer
-pip install -r requirements.txt
-python -m spacy download en_core_web_sm
-
-uvicorn main:app --reload --port 8000
-```
-
-Go to `http://localhost:8000`
-
-Three tabs:
-1. Memory Extraction - Load messages, see what it pulls out
-2. Personality Engine - Type text, see 3 transformations
-3. Agent Response - Ask questions, get personalized answers
-
----
-
-## Memory Structure
+## Memory Format
 
 ```json
 {
@@ -111,6 +141,11 @@ Three tabs:
 }
 ```
 
+Three buckets:
+- **Preferences** → work style, food habits, communication style
+- **Emotions** → recurring feelings (stress, excitement, etc.)
+- **Facts** → hard data (names, places, dates, allergies)
+
 Confidence scores tell you how reliable each extraction is.
 
 ---
@@ -122,69 +157,91 @@ Input: "I need to have a difficult conversation."
 **Calm Mentor:**
 > "Here's what I've observed: Direct communication builds trust, even when uncomfortable. Prepare your points but stay flexible. Trust the process - you're on the right path."
 
-**Witty Friend:**  
+**Witty Friend:**
 > "Yo, listen up! Direct communication builds trust even when uncomfortable. Prep your points but stay flexible. Most tough convos go better than expected. Trust me on this!"
 
 **Therapist:**
 > "I appreciate you opening up. Direct communication builds trust, even when uncomfortable. Prepare your points but stay flexible. How are you taking care of yourself through this?"
 
-Same content, different energy.
+Same info → three different vibes.
 
 ---
 
 ## What Gets Extracted
 
-Patterns it catches:
+**Preferences (18+ patterns):**
 - vegetarian, vegan, plant-based
 - works late, early bird
 - hates meetings, prefers async
 - allergic to X
 - has cat/dog named Y
 - introvert/extrovert
-- coffee/tea lover
+- coffee/tea person
 - exercise habits
 - reading preferences
+- remote work, work from home
 
-Emotions:
+**Emotions (7 keywords):**
 - stress, anxious, overwhelmed
 - excited, happy
 - tired, burned out
 - confused, uncertain
+- appreciation, grateful
 
-Plus spaCy pulls out names, places, dates, organizations.
-
----
-
-## APIs
-
-**POST /extract**  
-Send messages, get structured memory back.
-
-**POST /rewrite**  
-Send text + personality, get transformed version.
-
-**POST /generate-response**  
-Send memory + question + personality, get personalized answer.
-
-Look at the code for exact request/response formats.
+**Facts (via spaCy):**
+- Names (people, pets)
+- Places (cities, countries)
+- Dates (March 15, next week)
+- Organizations (companies)
+- Products (brands, apps)
 
 ---
 
-## Deploying on Render
+## Running Locally
 
-Free tier works fine.
+```bash
+git clone <your-repo>
+cd MindBank
+pip install -r requirements.txt
+python -m spacy download en_core_web_sm
 
-**Build command:**
+uvicorn main:app --reload --port 8000
+```
+
+Open → `http://localhost:8000`
+
+---
+
+## API Endpoints
+
+**POST /extract**
+Send messages → get structured memory
+
+**POST /rewrite**
+Send text + personality → get transformed version
+
+**POST /generate-response**
+Send memory + question + personality → get personalized answer
+
+Check the code for exact request/response formats.
+
+---
+
+## Deploying (Render Free Tier)
+
+1. Push code to GitHub
+2. Connect repo to Render
+3. Set build command:
 ```bash
 pip install -r requirements.txt && python -m spacy download en_core_web_sm
 ```
-
-**Start command:**
+4. Set start command:
 ```bash
 uvicorn main:app --host 0.0.0.0 --port $PORT
 ```
+5. Deploy
 
-That's it. Push to GitHub, connect to Render, done.
+Done. No complicated configs.
 
 ---
 
@@ -194,28 +251,37 @@ That's it. Push to GitHub, connect to Render, done.
 pytest tests/ -v
 ```
 
-Tests memory extraction accuracy, personality transformations, API responses, and error handling.
+Tests cover:
+- Memory extraction accuracy
+- Personality transformations
+- API response validation
+- Error handling
+- Fallback behavior
 
 ---
 
-## Technical Notes
+## Technical Details
 
-Uses FastAPI because it's fast and has auto docs.
+**FastAPI** → fast, has auto docs, async support
 
-Uses vanilla JS because no build step means I can edit and refresh instantly.
+**Vanilla JS** → no build step, edit and refresh instantly
 
-Uses spaCy for entity recognition - works offline, doesn't need GPU.
+**spaCy** → entity recognition without GPU, works offline
 
-Regex patterns handle explicit preferences, spaCy catches entities, confidence scores tell you what's reliable.
+**Regex patterns** → catch explicit statements ("I'm vegetarian")
 
-Strategy pattern for personalities means adding new ones is just creating a new class.
+**Strategy pattern** → each personality is isolated, easy to add new ones
+
+**Dual mode** → works without OpenAI (deterministic), can switch to LLM later
 
 ---
 
-## The Point
+## The Core Idea
 
-Assignment was: extract memories from 30 messages, transform response tones, show before/after.
+Problem: AI forgets everything → Solution: extract and store memories
 
-This does exactly that. Plus it uses the extracted memory to personalize responses based on context.
+Problem: AI sounds robotic → Solution: personality transformation
 
-Built as a technical assessment.
+Problem: responses feel generic → Solution: use memory context
+
+This system does all three.
